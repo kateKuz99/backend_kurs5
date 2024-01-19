@@ -1,9 +1,6 @@
 package com.nikak.pspkurssecurity.services.impl;
 
-import com.nikak.pspkurssecurity.dto.JwtAuthenticationResponse;
-import com.nikak.pspkurssecurity.dto.RefreshTokenRequest;
-import com.nikak.pspkurssecurity.dto.SignUpRequest;
-import com.nikak.pspkurssecurity.dto.SigninRequest;
+import com.nikak.pspkurssecurity.dto.*;
 import com.nikak.pspkurssecurity.entities.Role;
 import com.nikak.pspkurssecurity.entities.Client;
 import com.nikak.pspkurssecurity.entities.Specialist;
@@ -104,6 +101,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return jwtAuthenticationResponse;
         }
         return null;
+    }
+
+    public JwtAuthenticationResponse changePassword(String email, ChangePasswordRequest changePasswordRequest) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("no such user"));
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
+        var jwt = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+
+        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        jwtAuthenticationResponse.setToken(jwt);
+        jwtAuthenticationResponse.setRefreshToken(refreshToken);
+        return jwtAuthenticationResponse;
     }
 
 }

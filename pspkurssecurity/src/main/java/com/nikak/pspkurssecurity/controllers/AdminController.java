@@ -2,6 +2,7 @@ package com.nikak.pspkurssecurity.controllers;
 
 import com.nikak.pspkurssecurity.dto.ResponseMessage;
 import com.nikak.pspkurssecurity.dto.SessionRequest;
+import com.nikak.pspkurssecurity.entities.Favor;
 import com.nikak.pspkurssecurity.entities.Session;
 import com.nikak.pspkurssecurity.entities.Specialist;
 import com.nikak.pspkurssecurity.services.FavorService;
@@ -55,10 +56,11 @@ public class AdminController {
     @PostMapping("/specialist")
     public ResponseEntity<ResponseMessage> addSpecialist(
             @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestParam("name") String name) {
+            @RequestParam("name") String name,
+            @RequestParam("info") String info){
         String message = "";
         try {
-            message =  specialistService.createSpecialist(file,name);
+            message =  specialistService.createSpecialist(file,name,info);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
@@ -93,6 +95,22 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Could not update favor name!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+    }
+
+    @PutMapping("/favor/price/{favorId}")
+    public ResponseEntity<ResponseMessage> updateFavorPrice(
+            @RequestParam(value = "price", required = false) double price,
+            @PathVariable Long favorId
+    ){
+        String message = "";
+        System.out.println("wyte");
+        try {
+            message =  favorService.updateFavorPrice(favorId, price);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+            message = "Could not update favor price!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
@@ -140,6 +158,23 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/specialist/certificate/pic/{specialistId}")
+    public ResponseEntity<ResponseMessage> updateSpecialistImageCertificate(
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @PathVariable Long specialistId
+    ){
+        String message = "";
+        try {
+            System.out.println(file+"qewr");
+            message =  specialistService.updateSpecialistImageCertificate(specialistId,file);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+
+            message = "Could not upload the file !";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+    }
+
     @PutMapping("/specialist/name/{specialistId}")
     public ResponseEntity<ResponseMessage> updateSpecialistName(
             @RequestParam(value = "name", required = false) String name,
@@ -148,6 +183,21 @@ public class AdminController {
         String message = "";
         try {
             message =  specialistService.updateSpecialistName(specialistId, name);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+            message = "Could not update specialist name!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+    }
+
+    @PutMapping("/specialist/info/{specialistId}")
+    public ResponseEntity<ResponseMessage> updateSpecialistInfo(
+            @RequestParam(value = "info", required = false) String info,
+            @PathVariable Long specialistId
+    ){
+        String message = "";
+        try {
+            message =  specialistService.updateSpecialistInfo(specialistId, info);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Could not update specialist name!";
@@ -272,5 +322,13 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(e.getMessage());
         }
     }
+    @GetMapping("/favors")
+    public ResponseEntity<List<Favor>> getAllFavors(){
+        return ResponseEntity.ok(favorService.findAll());
+    }
 
+    @GetMapping("/specialists")
+    public ResponseEntity<List<Specialist>> getAllSpecialists(){
+        return ResponseEntity.ok(specialistService.findAll());
+    }
 }

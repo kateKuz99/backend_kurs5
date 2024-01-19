@@ -61,6 +61,38 @@ public class SpecialistServiceImpl implements SpecialistService {
 
     }
 
+    public String updateSpecialistImageCertificate(Long specialistId, MultipartFile file) throws IOException {
+        Specialist specialist = specialistRepository.findById(specialistId)
+                .orElseThrow(() -> new IllegalStateException("No such specialist with id " + specialistId));
+
+        Certificate certificate = specialist.getCertificate();
+        if (certificate == null) {
+            certificate = new Certificate();
+            specialist.setCertificate(certificate);
+        }
+
+
+        if (file != null) {
+            if (certificate.getFileName() != null) {
+                String filename = certificate.getFileName();
+                Path saveTo = Paths.get(FOLDER_PATH + filename);
+                Files.delete(saveTo);
+                Files.copy(file.getInputStream(), saveTo);
+            } else {
+                String filename = UUID.randomUUID().toString() + ".jpg";
+                Path saveTo = Paths.get(FOLDER_PATH + filename);
+                certificate.setFileName(filename);
+                Files.copy(file.getInputStream(), saveTo);
+            }
+        }
+        System.out.println(file);
+        Specialist savedSpecialist = specialistRepository.save(specialist);
+        if (savedSpecialist != null) {
+            return "Specialist certificate pic2: " + savedSpecialist.getCertificate().getFileName() + " updated successfully";
+        }
+        return null;
+    }
+
     @Transactional
     public Specialist updateSpecialistProfile(SpecialistProfileRequest specialistProfileRequest, Long specialistId) {
         Specialist specialist = specialistRepository.findById(specialistId)
@@ -153,9 +185,8 @@ public class SpecialistServiceImpl implements SpecialistService {
     }
     public byte[] getCertificateImage(String filename) throws IOException {
         Optional<Certificate> im = certificateRepository.findCertificateByFileName(filename);
-        System.out.println(im.get().getFileName()+" qwyqyuedgqyusdhfsu");
         return Files.readAllBytes(
-                new File(FOLDER_PATH + im.get().getFileName()).toPath());
+                new File(FOLDER_PATH + im.get().getSpecialist().getCertificate().getFileName()).toPath());
 
     }
     public byte[] getSpecialistImage(String filename) throws IOException {
@@ -180,9 +211,10 @@ public class SpecialistServiceImpl implements SpecialistService {
         return "specialist "+ specialist.getName()+ " deleted successfully";
     }
 
-    public String createSpecialist(MultipartFile file, String name) throws IOException{
+    public String createSpecialist(MultipartFile file, String name, String info) throws IOException{
         Specialist specialistToSave = new Specialist();
         specialistToSave.setName(name);
+        specialistToSave.setInfo(info);
         Specialist savedData;
         if(file != null){
             String filename = UUID.randomUUID().toString() + ".jpg";
@@ -242,8 +274,38 @@ public class SpecialistServiceImpl implements SpecialistService {
             specialist.setName(name);
         }
        Specialist saved = specialistRepository.save(specialist);
-        if(saved!=null) return "successfully updated subject: "+ name;
+        if(saved!=null) return "successfully updated specialist: "+ name;
         return "error";
+    }
+
+    public  String updateSpecialistInfo(Long specialistId, String info){
+        Specialist specialist = specialistRepository.findById(specialistId)
+                .orElseThrow(()->
+                        new IllegalStateException("specialist does not exist")
+                );
+        if(info!=null){
+            specialist.setInfo(info);
+        }
+        Specialist saved = specialistRepository.save(specialist);
+        if(saved!=null) return "successfully updated specialist: "+ info;
+        return "error";
+    }
+
+    public List<Specialist> findAll(){
+        return specialistRepository.findAll();
+    }
+    public List<Specialist> getSpecialistsByFavorId(Long favorId, boolean order) {
+        Comparator<Specialist> finalRatingComp1 = Comparator.comparingDouble(Specialist::getFinalRating);
+        Comparator<Specialist> finalRatingComp2 = (o1, o2) -> Double.compare(o2.getFinalRating(), o1.getFinalRating());
+
+
+                List<Specialist> list = specialistRepository.findByFavorId(favorId);
+                if (order) {
+                    list.sort(finalRatingComp2);
+                } else {
+                    list.sort(finalRatingComp1);
+                }
+                return list;
     }
 
     public Optional<Specialist> findById(Long specialistId){

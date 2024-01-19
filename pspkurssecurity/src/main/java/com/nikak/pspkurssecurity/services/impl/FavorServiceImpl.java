@@ -25,7 +25,6 @@ public class FavorServiceImpl implements FavorService {
     private final FavorRepository favorRepository;
 
     public String createFavor(MultipartFile file, String name, Double price) throws IOException{
-        System.out.println("erfehbrr");
         boolean favorIsPresent = favorRepository.findFavorByName(name).isPresent();
         if(favorIsPresent){
             throw new  IllegalStateException("name already taken");
@@ -57,6 +56,21 @@ public class FavorServiceImpl implements FavorService {
         }
         Favor saved = favorRepository.save(favor);
         if(saved!=null) return "successfully updated favor: "+ name;
+        return "error";
+    }
+
+    public  String updateFavorPrice(Long favorId, double price){
+        Favor favor = favorRepository.findById(favorId)
+                .orElseThrow(()->
+                        new IllegalStateException("favor does not exist")
+                );
+        if (price >= 0) {
+            favor.setPrice(price);
+            Favor saved = favorRepository.save(favor);
+            if (saved != null) {
+                return "successfully updated favor: " + price;
+            }
+        }
         return "error";
     }
 
@@ -136,5 +150,9 @@ public class FavorServiceImpl implements FavorService {
 
     public List<Favor> getMostPopularFavors(PageRequest pageRequest) {
         return favorRepository.getMostPopularFavors(pageRequest);
+    }
+
+    public List<Favor> findAll(){
+        return favorRepository.findAll();
     }
 }

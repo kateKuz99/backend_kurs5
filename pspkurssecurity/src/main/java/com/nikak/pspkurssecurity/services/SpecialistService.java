@@ -18,8 +18,10 @@ public interface SpecialistService {
 
  String deleteCertificate(Long specialistId, Long certificateId) throws IOException;
 
- String createSpecialist(MultipartFile file, String name) throws IOException;
+ String createSpecialist(MultipartFile file, String name, String info) throws IOException;
    List<Specialist> findSpecialistsByFavorId(Long favorId);
+ List<Specialist> getSpecialistsByFavorId(Long favorId, boolean order);
+
 
     byte[] getSpecialistImage(String filename) throws IOException;
 
@@ -40,5 +42,10 @@ public interface SpecialistService {
  byte[] getCertificateImage(String filename) throws IOException;
 
  Optional<Specialist> findById(Long specialistId);
+
+ String updateSpecialistInfo(Long specialistId, String info);
+
+ List<Specialist> findAll();
+ String updateSpecialistImageCertificate(Long specialistId, MultipartFile file) throws IOException;
 
 }

@@ -86,7 +86,6 @@ private final ClientRepository clientRepository;
 
     public Optional<List<Time>> findFreeTime(Date date, Long specialistId) {
         if(timeRepository.findFreeTime(date,specialistId).get().isEmpty()){
-           System.out.println(timeRepository.getAllTime().get());
             return timeRepository.getAllTime();
        }else {
             return timeRepository.findFreeTime(date,specialistId);

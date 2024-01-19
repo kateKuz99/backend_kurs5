@@ -12,7 +12,7 @@ public class Certificate {
     )
     private Long id;
     private  String fileName;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="specialist_id", nullable=false)
     @JsonBackReference
     private Specialist specialist;

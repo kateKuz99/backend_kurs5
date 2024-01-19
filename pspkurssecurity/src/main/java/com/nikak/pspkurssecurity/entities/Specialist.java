@@ -35,9 +35,9 @@ public class Specialist {
     @JsonManagedReference
     private Set<Favor> specialistFavors = new HashSet<>();
 
-    @OneToMany(mappedBy="specialist")
+    @OneToOne(mappedBy="specialist")
     @JsonManagedReference
-    private Set<Certificate> certificates;
+    private Certificate certificate;
 
     @OneToMany(mappedBy="specialist")
     @JsonBackReference
@@ -50,14 +50,14 @@ public class Specialist {
     public Specialist(){}
 
 
-    public Specialist(Long id, String name, String info, String filename, Double finalRating, Set<Favor> specialistFavors, Set<Certificate> certificates, List<Session> sessions, List<Rating> specialistRating) {
+    public Specialist(Long id, String name, String info, String filename, Double finalRating, Set<Favor> specialistFavors, Certificate certificate, List<Session> sessions, List<Rating> specialistRating) {
         this.id = id;
         this.name = name;
         this.info = info;
         this.filename = filename;
         this.finalRating = finalRating;
         this.specialistFavors = specialistFavors;
-        this.certificates = certificates;
+        this.certificate = certificate;
         this.sessions = sessions;
         this.specialistRating = specialistRating;
     }
@@ -116,12 +116,12 @@ public class Specialist {
         this.filename = filename;
     }
 
-    public Set<Certificate> getCertificates() {
-        return certificates;
+    public Certificate getCertificate() {
+        return certificate;
     }
 
-    public void setCertificates(Set<Certificate> certificates) {
-        this.certificates = certificates;
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
     }
 
     public Set<Favor> getSpecialistFavors() {
@@ -137,11 +137,11 @@ public class Specialist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Specialist that = (Specialist) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(info, that.info) && Objects.equals(filename, that.filename) && Objects.equals(finalRating, that.finalRating) && Objects.equals(specialistFavors, that.specialistFavors) && Objects.equals(certificates, that.certificates) && Objects.equals(sessions, that.sessions) && Objects.equals(specialistRating, that.specialistRating);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(info, that.info) && Objects.equals(filename, that.filename) && Objects.equals(finalRating, that.finalRating) && Objects.equals(specialistFavors, that.specialistFavors) && Objects.equals(certificate, that.certificate) && Objects.equals(sessions, that.sessions) && Objects.equals(specialistRating, that.specialistRating);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, info, filename, finalRating, specialistFavors, certificates, sessions, specialistRating);
+        return Objects.hash(id, name, info, filename, finalRating, specialistFavors, certificate, sessions, specialistRating);
     }
 }

@@ -23,4 +23,8 @@ public interface FavorService {
     List<Favor> findAllFavors();
 
     List<Favor> getMostPopularFavors(PageRequest pageRequest);
+
+    List<Favor> findAll();
+
+    String updateFavorPrice(Long favorId, double price);
 }

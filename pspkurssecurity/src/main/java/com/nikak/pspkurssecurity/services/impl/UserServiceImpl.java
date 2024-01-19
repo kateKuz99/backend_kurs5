@@ -46,10 +46,11 @@ public class UserServiceImpl implements UserService {
         ProfileResponse profileResponse = new ProfileResponse();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("no such user"));
+        profileResponse.setUser(user);
         switch (user.getRole()){
             case ADMIN -> {
                 List<Session> sessions = new ArrayList<>();
-                sessions.addAll(clientSessionRepository.findByClientId(user.getId()));
+                sessions.addAll(specialistSessionRepository.findAll());
                 sessions.sort(comp2);
                 profileResponse.setSessions(sessions);
                 profileResponse.setRole(user.getRole());

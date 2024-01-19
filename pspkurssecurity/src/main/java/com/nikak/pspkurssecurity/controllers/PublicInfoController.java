@@ -49,6 +49,16 @@ public class PublicInfoController {
                 .body(favorService.findFavorsBySpecialistId(specialistId));
     }
 
+    @GetMapping("/specialists1/{favorId}")
+    public ResponseEntity<List<Specialist>> getListFavorsByRating(
+            @PathVariable Long favorId,
+            @RequestParam boolean order
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(specialistService.getSpecialistsByFavorId(favorId,order));
+    }
 
     @GetMapping("/favors")//хз
     public ResponseEntity<?> getListFavors(
@@ -90,6 +100,7 @@ public class PublicInfoController {
                 .contentType(MediaType.valueOf("image/png"))
                 .body(im);
     }
+
 
 
    /* @GetMapping("subject/files/{id}")

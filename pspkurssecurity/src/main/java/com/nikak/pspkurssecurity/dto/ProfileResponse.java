@@ -7,6 +7,8 @@ import java.util.List;
 
 @Data
 public class ProfileResponse {
-    private List<Session> sessions;
+    private User user;
     private Role role;
+    private List<Session> sessions;
+
 }
